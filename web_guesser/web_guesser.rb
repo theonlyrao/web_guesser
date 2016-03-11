@@ -5,12 +5,15 @@ require 'pry'
 @@secret_number = rand(100)
 @@counter = 5
 
-get '/' do
+get '/?:p1?/?:p2?' do
   guess = params["guess"]
+  cheat = params["cheat"]
   if @@counter == 0
     make_secret_number
     @@counter = 5
     message = ["You guessed 5 times and have lost. SECRET NUMBER has been reset.", "red"]
+  elsif cheat == "true"
+    message = ["The SECRET NUMBER is #{@@secret_number}."]
   else
     message = check_guess(guess)
   end
@@ -52,7 +55,8 @@ def check_guess(guess)
   elsif guess.to_i == @@secret_number
     response = "You got it right!\nThe SECRET NUMBER is #{@@secret_number}."
     color = "green"
-    [response, color]
     @@counter = 5
+    make_secret_number
+    [response, color]
   end
 end
